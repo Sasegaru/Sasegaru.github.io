@@ -1,0 +1,601 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css"><link rel="stylesheet" href="css/L.Control.Locate.min.css">
+        <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/leaflet-search.css">
+        <link rel="stylesheet" href="css/leaflet-measure.css">
+        <style>
+        #map {
+            width: 541px;
+            height: 549px;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script><script src="js/L.Control.Locate.min.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet-measure.js"></script>
+        <script src="js/proj4.js"></script>
+        <script src="js/proj4leaflet.js"></script>
+        <script src="js/leaflet-search.js"></script>
+        <script src="data/ZonasProtegidasC_0.js"></script>
+        <script src="data/ZonaVerdeC_1.js"></script>
+        <script src="data/SendasC_2.js"></script>
+        <script src="data/CaminosC_3.js"></script>
+        <script src="data/LugaresdeInteresCompleto_4.js"></script>
+        <script src="data/Municipios_IGN_5.js"></script>
+        <script>
+        var highlightLayer;
+        function highlightFeature(e) {
+            highlightLayer = e.target;
+            highlightLayer.openPopup();
+        }
+        var crs = new L.Proj.CRS('EPSG:25830', '+proj=utm +zone=30 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs', {
+            resolutions: [2800, 1400, 700, 350, 175, 84, 42, 21, 11.2, 5.6, 2.8, 1.4, 0.7, 0.35, 0.14, 0.07],
+        });
+        var map = L.map('map', {
+            crs: crs,
+            continuousWorld: false,
+            worldCopyJump: false, 
+            zoomControl:true, maxZoom:28, minZoom:1
+        })
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="http://leafletjs.com" title="A JS library for interactive maps">Leaflet</a>');
+        L.control.locate({locateOptions: {maxZoom: 19}}).addTo(map);
+        var measureControl = new L.Control.Measure({
+            position: 'topleft',
+            primaryLengthUnit: 'meters',
+            secondaryLengthUnit: 'kilometers',
+            primaryAreaUnit: 'sqmeters',
+            secondaryAreaUnit: 'hectares'
+        });
+        measureControl.addTo(map);
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .innerHTML = '';
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .className += ' fas fa-ruler';
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+            if (bounds_group.getLayers().length) {
+                map.fitBounds(bounds_group.getBounds());
+            }
+        }
+        function pop_ZonasProtegidasC_0(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ID_SIMPLE'] !== null ? Autolinker.link(String(feature.properties['ID_SIMPLE'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MODIFICADO'] !== null ? Autolinker.link(String(feature.properties['MODIFICADO'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ID_HOJA'] !== null ? Autolinker.link(String(feature.properties['ID_HOJA'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ID_CODE'] !== null ? Autolinker.link(String(feature.properties['ID_CODE'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ID_MET'] !== null ? Autolinker.link(String(feature.properties['ID_MET'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['F_ALTA'] !== null ? Autolinker.link(String(feature.properties['F_ALTA'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ETIQUETA'] !== null ? Autolinker.link(String(feature.properties['ETIQUETA'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['TIPO_0107'] !== null ? Autolinker.link(String(feature.properties['TIPO_0107'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['F_BAJA'] !== null ? Autolinker.link(String(feature.properties['F_BAJA'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ID_COD_ETI'] !== null ? Autolinker.link(String(feature.properties['ID_COD_ETI'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['PROYECTO'] !== null ? Autolinker.link(String(feature.properties['PROYECTO'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['NNECCCPP'] !== null ? Autolinker.link(String(feature.properties['NNECCCPP'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ORIGEN_Z'] !== null ? Autolinker.link(String(feature.properties['ORIGEN_Z'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ID'] !== null ? Autolinker.link(String(feature.properties['ID'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['layer'] !== null ? Autolinker.link(String(feature.properties['layer'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['path'] !== null ? Autolinker.link(String(feature.properties['path'])) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_ZonasProtegidasC_0_0() {
+            return {
+                pane: 'pane_ZonasProtegidasC_0',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(152,125,183,1.0)',
+            }
+        }
+        map.createPane('pane_ZonasProtegidasC_0');
+        map.getPane('pane_ZonasProtegidasC_0').style.zIndex = 400;
+        map.getPane('pane_ZonasProtegidasC_0').style['mix-blend-mode'] = 'normal';
+        var layer_ZonasProtegidasC_0 = new L.geoJson(json_ZonasProtegidasC_0, {
+            attribution: '',
+            pane: 'pane_ZonasProtegidasC_0',
+            onEachFeature: pop_ZonasProtegidasC_0,
+            style: style_ZonasProtegidasC_0_0,
+        });
+        bounds_group.addLayer(layer_ZonasProtegidasC_0);
+        map.addLayer(layer_ZonasProtegidasC_0);
+        function pop_ZonaVerdeC_1(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ID_COD_ETI'] !== null ? Autolinker.link(String(feature.properties['ID_COD_ETI'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MODIFICADO'] !== null ? Autolinker.link(String(feature.properties['MODIFICADO'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ID_HOJA'] !== null ? Autolinker.link(String(feature.properties['ID_HOJA'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ID_CODE'] !== null ? Autolinker.link(String(feature.properties['ID_CODE'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ID_MET'] !== null ? Autolinker.link(String(feature.properties['ID_MET'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['F_ALTA'] !== null ? Autolinker.link(String(feature.properties['F_ALTA'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['F_BAJA'] !== null ? Autolinker.link(String(feature.properties['F_BAJA'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>ETIQUETA</strong><br />' + (feature.properties['ETIQUETA'] !== null ? Autolinker.link(String(feature.properties['ETIQUETA'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['PROYECTO'] !== null ? Autolinker.link(String(feature.properties['PROYECTO'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['TIPO_0561'] !== null ? Autolinker.link(String(feature.properties['TIPO_0561'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ORIGEN_Z'] !== null ? Autolinker.link(String(feature.properties['ORIGEN_Z'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ID_SIMPLE'] !== null ? Autolinker.link(String(feature.properties['ID_SIMPLE'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['NNECCCPP'] !== null ? Autolinker.link(String(feature.properties['NNECCCPP'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ID'] !== null ? Autolinker.link(String(feature.properties['ID'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ID_BIC'] !== null ? Autolinker.link(String(feature.properties['ID_BIC'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['layer'] !== null ? Autolinker.link(String(feature.properties['layer'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['path'] !== null ? Autolinker.link(String(feature.properties['path'])) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_ZonaVerdeC_1_0() {
+            return {
+                pane: 'pane_ZonaVerdeC_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(229,182,54,1.0)',
+            }
+        }
+        map.createPane('pane_ZonaVerdeC_1');
+        map.getPane('pane_ZonaVerdeC_1').style.zIndex = 401;
+        map.getPane('pane_ZonaVerdeC_1').style['mix-blend-mode'] = 'normal';
+        var layer_ZonaVerdeC_1 = new L.geoJson(json_ZonaVerdeC_1, {
+            attribution: '',
+            pane: 'pane_ZonaVerdeC_1',
+            onEachFeature: pop_ZonaVerdeC_1,
+            style: style_ZonaVerdeC_1_0,
+        });
+        bounds_group.addLayer(layer_ZonaVerdeC_1);
+        map.addLayer(layer_ZonaVerdeC_1);
+        function pop_SendasC_2(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ID_SIMPLE'] !== null ? Autolinker.link(String(feature.properties['ID_SIMPLE'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MODIFICADO'] !== null ? Autolinker.link(String(feature.properties['MODIFICADO'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ID_HOJA'] !== null ? Autolinker.link(String(feature.properties['ID_HOJA'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ID_CODE'] !== null ? Autolinker.link(String(feature.properties['ID_CODE'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ID_MET'] !== null ? Autolinker.link(String(feature.properties['ID_MET'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['F_ALTA'] !== null ? Autolinker.link(String(feature.properties['F_ALTA'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['F_BAJA'] !== null ? Autolinker.link(String(feature.properties['F_BAJA'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ETIQUETA'] !== null ? Autolinker.link(String(feature.properties['ETIQUETA'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['PROYECTO'] !== null ? Autolinker.link(String(feature.properties['PROYECTO'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['NNECCCPP'] !== null ? Autolinker.link(String(feature.properties['NNECCCPP'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ORIGEN_Z'] !== null ? Autolinker.link(String(feature.properties['ORIGEN_Z'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ID'] !== null ? Autolinker.link(String(feature.properties['ID'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ID_COD_ETI'] !== null ? Autolinker.link(String(feature.properties['ID_COD_ETI'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SITUA_0626'] !== null ? Autolinker.link(String(feature.properties['SITUA_0626'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ID_TRAMO'] !== null ? Autolinker.link(String(feature.properties['ID_TRAMO'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ID_VIAL'] !== null ? Autolinker.link(String(feature.properties['ID_VIAL'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['layer'] !== null ? Autolinker.link(String(feature.properties['layer'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['path'] !== null ? Autolinker.link(String(feature.properties['path'])) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_SendasC_2_0() {
+            return {
+                pane: 'pane_SendasC_2',
+                opacity: 1,
+                color: 'rgba(190,207,80,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 1.0,
+                fillOpacity: 0,
+            }
+        }
+        map.createPane('pane_SendasC_2');
+        map.getPane('pane_SendasC_2').style.zIndex = 402;
+        map.getPane('pane_SendasC_2').style['mix-blend-mode'] = 'normal';
+        var layer_SendasC_2 = new L.geoJson(json_SendasC_2, {
+            attribution: '',
+            pane: 'pane_SendasC_2',
+            onEachFeature: pop_SendasC_2,
+            style: style_SendasC_2_0,
+        });
+        bounds_group.addLayer(layer_SendasC_2);
+        map.addLayer(layer_SendasC_2);
+        function pop_CaminosC_3(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ID'] !== null ? Autolinker.link(String(feature.properties['ID'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ID_SIMPLE'] !== null ? Autolinker.link(String(feature.properties['ID_SIMPLE'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MODIFICADO'] !== null ? Autolinker.link(String(feature.properties['MODIFICADO'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ID_HOJA'] !== null ? Autolinker.link(String(feature.properties['ID_HOJA'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ID_CODE'] !== null ? Autolinker.link(String(feature.properties['ID_CODE'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ID_MET'] !== null ? Autolinker.link(String(feature.properties['ID_MET'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['F_ALTA'] !== null ? Autolinker.link(String(feature.properties['F_ALTA'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['F_BAJA'] !== null ? Autolinker.link(String(feature.properties['F_BAJA'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ETIQUETA'] !== null ? Autolinker.link(String(feature.properties['ETIQUETA'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ID_COD_ETI'] !== null ? Autolinker.link(String(feature.properties['ID_COD_ETI'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['PROYECTO'] !== null ? Autolinker.link(String(feature.properties['PROYECTO'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SITUA_0623'] !== null ? Autolinker.link(String(feature.properties['SITUA_0623'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['NNECCCPP'] !== null ? Autolinker.link(String(feature.properties['NNECCCPP'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ORIGEN_Z'] !== null ? Autolinker.link(String(feature.properties['ORIGEN_Z'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FIRME_0623'] !== null ? Autolinker.link(String(feature.properties['FIRME_0623'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ID_TRAMO'] !== null ? Autolinker.link(String(feature.properties['ID_TRAMO'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ID_VIAL'] !== null ? Autolinker.link(String(feature.properties['ID_VIAL'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['layer'] !== null ? Autolinker.link(String(feature.properties['layer'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['path'] !== null ? Autolinker.link(String(feature.properties['path'])) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_CaminosC_3_0() {
+            return {
+                pane: 'pane_CaminosC_3',
+                opacity: 1,
+                color: 'rgba(183,72,75,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 1.0,
+                fillOpacity: 0,
+            }
+        }
+        map.createPane('pane_CaminosC_3');
+        map.getPane('pane_CaminosC_3').style.zIndex = 403;
+        map.getPane('pane_CaminosC_3').style['mix-blend-mode'] = 'normal';
+        var layer_CaminosC_3 = new L.geoJson(json_CaminosC_3, {
+            attribution: '',
+            pane: 'pane_CaminosC_3',
+            onEachFeature: pop_CaminosC_3,
+            style: style_CaminosC_3_0,
+        });
+        bounds_group.addLayer(layer_CaminosC_3);
+        map.addLayer(layer_CaminosC_3);
+        function pop_LugaresdeInteresCompleto_4(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ID'] !== null ? Autolinker.link(String(feature.properties['ID'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['OBJECTID'] !== null ? Autolinker.link(String(feature.properties['OBJECTID'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Etiqueta</strong><br />' + (feature.properties['Etiqueta'] !== null ? Autolinker.link(String(feature.properties['Etiqueta'])) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_LugaresdeInteresCompleto_4_0() {
+            return {
+                pane: 'pane_LugaresdeInteresCompleto_4',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(243,166,178,1.0)',
+            }
+        }
+        map.createPane('pane_LugaresdeInteresCompleto_4');
+        map.getPane('pane_LugaresdeInteresCompleto_4').style.zIndex = 404;
+        map.getPane('pane_LugaresdeInteresCompleto_4').style['mix-blend-mode'] = 'normal';
+        var layer_LugaresdeInteresCompleto_4 = new L.geoJson(json_LugaresdeInteresCompleto_4, {
+            attribution: '',
+            pane: 'pane_LugaresdeInteresCompleto_4',
+            onEachFeature: pop_LugaresdeInteresCompleto_4,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_LugaresdeInteresCompleto_4_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_LugaresdeInteresCompleto_4);
+        map.addLayer(layer_LugaresdeInteresCompleto_4);
+        function pop_Municipios_IGN_5(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['OBJECTID'] !== null ? Autolinker.link(String(feature.properties['OBJECTID'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['INSPIREID'] !== null ? Autolinker.link(String(feature.properties['INSPIREID'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['NATCODE'] !== null ? Autolinker.link(String(feature.properties['NATCODE'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>NAMEUNIT</strong><br />' + (feature.properties['NAMEUNIT'] !== null ? Autolinker.link(String(feature.properties['NAMEUNIT'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['CODNUT1'] !== null ? Autolinker.link(String(feature.properties['CODNUT1'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['CODNUT2'] !== null ? Autolinker.link(String(feature.properties['CODNUT2'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['CODNUT3'] !== null ? Autolinker.link(String(feature.properties['CODNUT3'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['CODIGOINE'] !== null ? Autolinker.link(String(feature.properties['CODIGOINE'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Shape__Are'] !== null ? Autolinker.link(String(feature.properties['Shape__Are'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Shape__Len'] !== null ? Autolinker.link(String(feature.properties['Shape__Len'])) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_Municipios_IGN_5_0() {
+            return {
+                pane: 'pane_Municipios_IGN_5',
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(84,243,158,0.0)',
+            }
+        }
+        map.createPane('pane_Municipios_IGN_5');
+        map.getPane('pane_Municipios_IGN_5').style.zIndex = 405;
+        map.getPane('pane_Municipios_IGN_5').style['mix-blend-mode'] = 'normal';
+        var layer_Municipios_IGN_5 = new L.geoJson(json_Municipios_IGN_5, {
+            attribution: '',
+            pane: 'pane_Municipios_IGN_5',
+            onEachFeature: pop_Municipios_IGN_5,
+            style: style_Municipios_IGN_5_0,
+        });
+        bounds_group.addLayer(layer_Municipios_IGN_5);
+        map.addLayer(layer_Municipios_IGN_5);
+        var baseMaps = {};
+        L.control.layers(baseMaps,{'<img src="legend/Municipios_IGN_5.png" /> Municipios_IGN': layer_Municipios_IGN_5,'<img src="legend/LugaresdeInteresCompleto_4.png" /> LugaresdeInteresCompleto': layer_LugaresdeInteresCompleto_4,'<img src="legend/CaminosC_3.png" /> CaminosC': layer_CaminosC_3,'<img src="legend/SendasC_2.png" /> SendasC': layer_SendasC_2,'<img src="legend/ZonaVerdeC_1.png" /> ZonaVerdeC': layer_ZonaVerdeC_1,'<img src="legend/ZonasProtegidasC_0.png" /> ZonasProtegidasC': layer_ZonasProtegidasC_0,}).addTo(map);
+        setBounds();
+        map.addControl(new L.Control.Search({
+            layer: layer_LugaresdeInteresCompleto_4,
+            initial: false,
+            hideMarkerOnCollapse: true,
+            propertyName: 'Etiqueta'}));
+        document.getElementsByClassName('search-button')[0].className +=
+         ' fa fa-binoculars';
+        </script>
+    </body>
+</html>
